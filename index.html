@@ -44,9 +44,9 @@
         <script type="text/javascript">
             setTimeout(() => {
                 playerInstance.play();
-                document.querySelector("video").play();
+                //document.querySelector("video").play();
                 setTimeout(() => {
-                    document.location = "javascript:document.querySelector('.jw-icon-playback').click();";
+                    window.scrollTo(0,document.body.scrollHeight);
                 }, "5000");
             }, "5000");
         </script>
