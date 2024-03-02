@@ -30,6 +30,7 @@
 
         async function initPlayer() {
             // Create a Player instance.
+            shaka.polyfill.installAll();
             const video = document.getElementById('video');
             const player = new shaka.Player();
             await player.attach(video);
