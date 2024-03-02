@@ -41,11 +41,6 @@
             player.addEventListener('error', onErrorEvent);
 
             player.configure({
-                streaming: {
-                    bufferingGoal: 30,
-                    rebufferingGoal: 15,
-                    bufferBehind: 5
-                },
                 drm: {
                     clearKeys: {
                         getKEY: getKEY2
