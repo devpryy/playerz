@@ -8,7 +8,7 @@
 <body>
 
 
-    <video id="video" width="100%" controls autoplay></video>
+    <video id="video" heigth="100vh" controls autoplay></video>
 
 
 
@@ -42,6 +42,11 @@
             player.addEventListener('error', onErrorEvent);
 
             player.configure({
+                streaming: {
+                    bufferingGoal: 60,
+                    rebufferingGoal: 30,
+                    bufferBehind: 5
+                },
                 drm: {
                     clearKeys: {
                         [getKEY]: getKEY2
