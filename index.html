@@ -1,52 +1,85 @@
 <html>
-    <head>
-        <title>EN VIVO</title>
-    </head>
-    <body>
-        <script src="https://ssl.p.jwpcdn.com/player/v/8.21.0/jwplayer.js"></script>
-        <script>
-            jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";
-        </script>
-        <div id="player"></div>
-        <script>
-            function getParameterByName(name) {
-                name = name.replace(/[\[]/, "\[").replace(/[\]]/, "\]");
-                var regex = new RegExp("[\?&]" + name + "=([^&#]*)"),
-                results = regex.exec(location.search);
-                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-            }
-            var getURL = getParameterByName('lk');
-            var getKEY  = getParameterByName('kid');
-            var getKEY2  = getParameterByName('kki');
 
-            var playerInstance = jwplayer("player");
-            playerInstance.setup({
-                playlist: [
-                    {
-                        title: "EN VIVO",
-                        sources: [
-                            {
-                                default: false,
-                                type: "dash",
-                                file: getURL,
-                                drm: { clearkey: { keyId: getKEY, key: getKEY2 } },
-                                label: "0",
-                            },
-                        ],
-                    },
-                ],
-                width: "100%",
-                height: "100%",
-                autostart: true,
+<head>
+    <title>EN VIVO</title>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.min.js"></script>
+
+
+    <video id="video" height="100vh" autoplay></video>
+
+
+
+
+
+
+    <script>
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\[").replace(/[\]]/, "\]");
+            var regex = new RegExp("[\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        var getURL = getParameterByName('lk');
+        var getKEY = getParameterByName('kid');
+        var getKEY2 = getParameterByName('kki');
+
+
+
+        async function initPlayer() {
+            // Create a Player instance.
+            const video = document.getElementById('video');
+            const player = new shaka.Player();
+            await player.attach(video);
+
+            // Attach player to the window to make it easy to access in the JS console.
+            window.player = player;
+
+            // Listen for error events.
+            player.addEventListener('error', onErrorEvent);
+
+            player.configure({
+                streaming: {
+                    bufferingGoal: 120,
+                    rebufferingGoal: 60,
+                    bufferBehind: 5
+                },
+                drm: {
+                    clearKeys: {
+                        getKEY: getKEY2
+                    }
+                }
             });
-        </script>
-        <script type="text/javascript">
-            /*setTimeout(() => {
-                playerInstance.setCurrentQuality(2);
-                //document.querySelector(".jw-icon-volume").click();
-                //playerInstance.play();
-                //document.querySelector("video").play();
-            }, "100000");*/
-        </script>
-    </body>
+
+            // Try to load a manifest.
+            // This is an asynchronous process.
+            try {
+                await player.load(getURL);
+                // This runs if the asynchronous load is successful.
+                console.log('The video has now been loaded!');
+            } catch (e) {
+                // onError is executed if the asynchronous load fails.
+                onError(e);
+            }
+        }
+
+
+        function onErrorEvent(event) {
+            // Extract the shaka.util.Error object from the event.
+            onError(event.detail);
+        }
+
+        function onError(error) {
+            // Log the error.
+            console.error('Error code', error.code, 'object', error);
+        }
+
+        document.addEventListener('DOMContentLoaded', initPlayer);
+
+
+    </script>
+</body>
+
 </html>
